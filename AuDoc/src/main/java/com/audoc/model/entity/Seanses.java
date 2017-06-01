@@ -5,8 +5,9 @@
  */
 package com.audoc.model.entity;
 
-import com.audoc.model.datetime.apiCalendar;
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.LocalTime;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,7 +39,7 @@ public class Seanses implements Serializable {
     @Basic(optional = false)
     @Column(name = "seansesTime")
     @Temporal(TemporalType.TIMESTAMP)
-    private apiCalendar seansesTime;
+    private Timestamp seansesTime;
     @Basic(optional = false)
     @Column(name = "pacientName")
     private String pacientName;
@@ -50,21 +51,21 @@ public class Seanses implements Serializable {
     public Seanses() {
     }
 
-    public Seanses(apiCalendar seansesTime) {
+    public Seanses(Timestamp seansesTime) {
         this.seansesTime = seansesTime;
     }
 
-    public Seanses(apiCalendar seanses_time, String pacient_name) {
+    public Seanses(Timestamp seanses_time, String pacient_name) {
         this.seansesTime = seanses_time;
         this.pacientName = pacient_name;
         
     }
 
-    public apiCalendar getSeansesTime() {
+    public Timestamp getSeansesTime() {
         return seansesTime;
     }
 
-    public void setSeansesTime(apiCalendar seansesTime) {
+    public void setSeansesTime(Timestamp seansesTime) {
         this.seansesTime = seansesTime;
     }
 
@@ -115,6 +116,13 @@ public class Seanses implements Serializable {
     @Override
     public String toString() {
         return seansesTime + ": "+pacientName+", "+isFirstTime;
+    }
+
+    public String getTime() {
+        LocalTime time = this.seansesTime.toLocalDateTime().toLocalTime();
+        return time.toString()
+//                .format(DateTimeFormatter.ofPattern("HH:mm"))
+                ;
     }
     
 }
