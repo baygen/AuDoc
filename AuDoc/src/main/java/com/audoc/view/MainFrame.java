@@ -1,8 +1,11 @@
 package com.audoc.view;
 
 
+import com.audoc.model.datetime.DateTimeAPI;
+import com.audoc.model.entity.Seanses;
+import com.audoc.view.moduls.SeanseTableModel;
+import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -23,22 +26,19 @@ public class MainFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    private final HibernateUtil hibUtil;
-    private final SimpleDateFormat sdfDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    private final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
     private final String firstTableDay;
     private final String nextTableDay;
-    public String date;
     private final SeanseTableModel seanseTableModel;
     private String updatedDate;
+//    private final DateTimeAPI dateClass;
     
     
 
-    public MainFrame() {
-        hibUtil = new HibernateUtil();
+    public MainFrame(DateTimeAPI dates) {
+//        this.dateClass= dates;
         seanseTableModel = new SeanseTableModel();
-        firstTableDay = apiCalendar.getFirstTableDayString();
-        nextTableDay = apiCalendar.getNextTableDayString();
+        firstTableDay = dates.FIRST_TABLE_DATE_STRING;
+        nextTableDay = dates.SECOND_TABLE_DATE_STRING;
         initComponents();
         runningClock();
         displayDataToTables();
@@ -119,10 +119,10 @@ public class MainFrame extends JFrame {
         panelTodayTable.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, java.awt.Color.white, java.awt.Color.lightGray));
 
         labelTodayDate.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        labelTodayDate.setText(getFormattedDate(getStartSeanseDay()));
+        labelTodayDate.setText(firstTableDay);
 
         jTableToday.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jTableToday.setModel(seanseTableModel.getModel(today));
+        jTableToday.setModel(seanseTableModel.getModel(firstTableDay));
         jTableToday.setAlignmentX(2.0F);
         jTableToday.setAlignmentY(2.0F);
         jTableToday.setAutoscrolls(false);
@@ -158,7 +158,7 @@ public class MainFrame extends JFrame {
         panelTomorrowTable.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, java.awt.Color.white, java.awt.Color.lightGray));
 
         jTableNextDay.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jTableNextDay.setModel(seanseTableModel.getModel(nextDay)
+        jTableNextDay.setModel(seanseTableModel.getModel(nextTableDay)
 
         );
         jTableNextDay.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -171,7 +171,7 @@ public class MainFrame extends JFrame {
         jScrollPaneTomorrow.setViewportView(jTableNextDay);
 
         labelNextDate.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        labelNextDate.setText(getFormattedDate(getNextTableDate()));
+        labelNextDate.setText(nextTableDay);
 
         javax.swing.GroupLayout panelTomorrowTableLayout = new javax.swing.GroupLayout(panelTomorrowTable);
         panelTomorrowTable.setLayout(panelTomorrowTableLayout);
@@ -231,7 +231,7 @@ public class MainFrame extends JFrame {
 
         jComboTime.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "10:00", "10:40", "11:20", "12:00", "12:40","13:20","14:40","15:20","16:00","16:40","17:20" }));
 
-        labResult.setText("jLabel5");
+        labResult.setText("Prymitka:");
 
         //labResult.setText(jDateChooser1.getDateFormatString());
         jDateChooser1.setDateFormatString("dd-MM-yyyy");
@@ -324,7 +324,7 @@ public class MainFrame extends JFrame {
                     .addComponent(jPanelNewSeanse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(forTableMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(panelTomorrowTable, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelTomorrowTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -517,7 +517,7 @@ public class MainFrame extends JFrame {
         }
     }//GEN-LAST:event_jTableNextDayMousePressed
 
-    @SuppressWarnings("unchecked")
+//    @SuppressWarnings("unchecked")
     private void setSeanseFromDatabaseToTable(LocalDate date, JTable table){
 
         String day=date.format(DateTimeFormatter.ISO_LOCAL_DATE);
@@ -531,16 +531,12 @@ public class MainFrame extends JFrame {
 
                 lis.forEach((ob) -> {
                     Seanses s = (Seanses)ob;
-                    String min=""+s.getSeansesTime().get(Calendar.MINUTE);
-                        if(min.equals("0")){
-                            min="00";
-                        }
-                    String sqlTime=s.getSeansesTime().get(Calendar.HOUR_OF_DAY)+":"+min;
+
                     for(int i = 0;i<dtm.getRowCount();i++){
                         String tableTime = (String)dtm.getValueAt(i, 0);
+//                        LocalTime time = LocalTime.parse(tableTime);
+                        if(tableTime.equals(s.getTime())){
 
-                        if(tableTime.equals(sqlTime)){
-//                                dtm.setValueAt(getFormattedDate(ldt.toLocalDate()), i, 0);
                                 dtm.setValueAt(s.getPacientName(), i, 1);
                                 dtm.setValueAt(s.getPacientPhone(), i, 2);
                                 String isFirstTime = (s.getIsFirstTime())?"Вперше":null;
@@ -616,14 +612,11 @@ public class MainFrame extends JFrame {
 //        java.awt.EventQueue.invokeLater(() -> {
 //            new MainFrame().setVisible(true);
 //        });
-
-int y = 1;
-int k;
-for(k = 6; k >= 3; k--)
-y = y + k;
-System.out.println("y = " + y);
-System.out.println("k = " + k);
-                    
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+LocalDateTime date = LocalDateTime.parse("2017-04-08 10:40",formatter);
+Timestamp stamp = Timestamp.valueOf(date);
+                Seanses s= new Seanses(stamp, "Tested time");
+                System.out.println(s.getTime());
     }
     
     public Seanses getSeanseFromGUI() {
