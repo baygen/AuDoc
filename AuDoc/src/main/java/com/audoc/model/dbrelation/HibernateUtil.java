@@ -6,6 +6,8 @@
 package com.audoc.model.dbrelation;
 
 import com.audoc.model.entity.Seanses;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -30,14 +32,12 @@ public class HibernateUtil {
     
     static {
         try {
-            // Create the SessionFactory from standard (hibernate.cfg.xml) 
-            // config file.
+            
             Configuration configuration=new Configuration().configure("hibernate.cfg.xml");
             ServiceRegistry registry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             
             sessionFactory = configuration.buildSessionFactory(registry);
         } catch (HibernateException ex) {
-            // Log the exception. 
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
@@ -48,18 +48,16 @@ public class HibernateUtil {
     }
 
     
-    public void addSeanse (Object seanse, String date_time) {
+    public void addSeanse (Object seanse) {
        
         Session ses = getSessionFactory().openSession();
         
         Seanses s=(Seanses)seanse;
         Transaction tr = ses.beginTransaction();
-        String queryByDate="SELECT s FROM Seanses s where s.seansesTime like '"+date_time+"%'";
+        String queryByDate="SELECT s FROM Seanses s where s.seansesTime like '"+s.getSeansesTime()+"%'";
        
         try{
-            
-            Query query =ses.createQuery(queryByDate);
-            List<Seanses> res=query.list();
+            List<Seanses> res=ses.createQuery(queryByDate).list();
             if(res.isEmpty()){
                 ses.save(s);
                 tr.commit();
@@ -70,24 +68,20 @@ public class HibernateUtil {
                 tr.commit();
                 }
             }
-            
-            ses.close();
         }catch(HibernateException e){
-
+            tr.rollback();
         }
-        
-        
+        ses.close();
     }
     
 
-    public static List<?> getListBy_Date(String date) {
+    public List<Seanses> getListByDate(LocalDate date) {
         
         Session ses =getSessionFactory().openSession();
         ses.beginTransaction();
         String getByDate="SELECT s FROM Seanses s where s.seansesTime like '"+date+"%'";
-        Query query = ses.createQuery(getByDate);
         
-        List<?> res=query.list();
+        List<Seanses> res=ses.createQuery(getByDate).list();
         
         ses.getTransaction().commit();
 //        ses.flush();
@@ -102,12 +96,11 @@ public class HibernateUtil {
 
     public List<?> getSeanseByPacientName(String name) {
         
-        Session ses =getSessionFactory().openSession();
+        Session ses = getSessionFactory().openSession();
         ses.beginTransaction();
         
-        Query query = ses.getNamedQuery("Seanses.findByPacientName");
-        query.setString("pacientName", name);
-        List<Seanses> res = query.list();
+        List<Seanses> res = ses.getNamedQuery("Seanses.findByPacientName")
+                .setString("pacientName", name).list();
         ses.getTransaction().commit();
         try{
             ses.close();
@@ -118,15 +111,15 @@ public class HibernateUtil {
 
     
     public List<?> getAllSeanse() {
-        Session session=getSessionFactory().openSession();
+        Session session = getSessionFactory().openSession();
         session.beginTransaction();
         Query query;
         query = session.createQuery("SELECT s FROM Seanses s");
 //        getNamedQuery("Seanse.findAll");
         List<?> res = query.list();
         session.getTransaction().commit();
+        
         try{
-            
             session.close();
         }catch(HibernateException he){
             JOptionPane.showMessageDialog(null, he.getMessage());
@@ -134,22 +127,18 @@ public class HibernateUtil {
         return res;
     }
 
-    public void removeByDate(String date) throws HibernateException{
-        Session session = getSessionFactory().openSession();
-        String rem = "DELETE FROM Seanses s WHERE s.seansesTime LIKE '"+date+"%'";
-        session.beginTransaction();
-        Query query =session.createQuery(rem);
-        query.executeUpdate();
+    public int removeByDate(Timestamp datetime) throws HibernateException{
+        
+        int res = 0;
+            Session session = getSessionFactory().openSession(); 
+            String rem = "DELETE FROM Seanses s WHERE s.seansesTime = '"+datetime+"%'";
+            
+            session.beginTransaction();
+            session.createQuery(rem).executeUpdate();
 //        session.delete(seans);
-        session.getTransaction().commit();
-        session.close();
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        return count;
+            session.getTransaction().commit();
+            res = 1;
+        return res;
     }
-
-    public void remove(Calendar seansesTime) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
      
 }

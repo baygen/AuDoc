@@ -6,6 +6,7 @@
 package com.audoc.model;
 
 import com.audoc.model.dbrelation.HibernateUtil;
+import java.sql.Timestamp;
 
 /**
  *
@@ -16,10 +17,16 @@ public class Functions {
    private final HibernateUtil hibernateUtil;
 
     public Functions() {
-        hibernateUtil=new HibernateUtil();
+        hibernateUtil = new HibernateUtil();
     }
    
-   
+   public void removeSeanse(Timestamp timestamp){
+       hibernateUtil.removeByDate(timestamp);
+       
+   }
     
+   public void addSeanse(){
+       
+   }
     
 }

@@ -5,18 +5,15 @@ import com.audoc.model.datetime.DateTimeAPI;
 import com.audoc.model.entity.Seanses;
 import com.audoc.view.moduls.SeanseTableModel;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import org.hibernate.HibernateException;
  
 /**
  *
@@ -26,22 +23,17 @@ public class MainFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    private final String firstTableDay;
-    private final String nextTableDay;
-    private final SeanseTableModel seanseTableModel;
-    private String updatedDate;
-//    private final DateTimeAPI dateClass;
-    
-    
+    private final SeanseTableModel seanseTableModel;    
 
-    public MainFrame(DateTimeAPI dates) {
+
+    public MainFrame() {
 //        this.dateClass= dates;
         seanseTableModel = new SeanseTableModel();
-        firstTableDay = dates.FIRST_TABLE_DATE_STRING;
-        nextTableDay = dates.SECOND_TABLE_DATE_STRING;
+//        firstTableDay = DateTimeAPI.STRING_DATE_FIRST_TABLE;
+//        nextTableDay = DateTimeAPI.STRING_DATE_SECOND_TABLE;
         initComponents();
         runningClock();
-        displayDataToTables();
+//        displayDataToTables();
     }
 
     @SuppressWarnings("unchecked")
@@ -119,10 +111,10 @@ public class MainFrame extends JFrame {
         panelTodayTable.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, java.awt.Color.white, java.awt.Color.lightGray));
 
         labelTodayDate.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        labelTodayDate.setText(firstTableDay);
+        labelTodayDate.setText(DateTimeAPI.STRING_DATE_FIRST_TABLE);
 
         jTableToday.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jTableToday.setModel(seanseTableModel.getModel(firstTableDay));
+        jTableToday.setModel(seanseTableModel.getModel(DateTimeAPI.STRING_DATE_FIRST_TABLE));
         jTableToday.setAlignmentX(2.0F);
         jTableToday.setAlignmentY(2.0F);
         jTableToday.setAutoscrolls(false);
@@ -158,7 +150,7 @@ public class MainFrame extends JFrame {
         panelTomorrowTable.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, java.awt.Color.white, java.awt.Color.lightGray));
 
         jTableNextDay.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jTableNextDay.setModel(seanseTableModel.getModel(nextTableDay)
+        jTableNextDay.setModel(seanseTableModel.getModel(DateTimeAPI.STRING_DATE_SECOND_TABLE)
 
         );
         jTableNextDay.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -171,7 +163,7 @@ public class MainFrame extends JFrame {
         jScrollPaneTomorrow.setViewportView(jTableNextDay);
 
         labelNextDate.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        labelNextDate.setText(nextTableDay);
+        labelNextDate.setText(DateTimeAPI.STRING_DATE_SECOND_TABLE);
 
         javax.swing.GroupLayout panelTomorrowTableLayout = new javax.swing.GroupLayout(panelTomorrowTable);
         panelTomorrowTable.setLayout(panelTomorrowTableLayout);
@@ -238,11 +230,6 @@ public class MainFrame extends JFrame {
         jDateChooser1.setDebugGraphicsOptions(javax.swing.DebugGraphics.BUFFERED_OPTION);
 
         RemoveChoosen.setText("Remove Choosen");
-        RemoveChoosen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                RemoveChoosenActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanelNewSeanseLayout = new javax.swing.GroupLayout(jPanelNewSeanse);
         jPanelNewSeanse.setLayout(jPanelNewSeanseLayout);
@@ -437,73 +424,73 @@ public class MainFrame extends JFrame {
 
     private void jButNewPacientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButNewPacientActionPerformed
         
-       Thread thread = new Thread("Saving seanses to DB"){
-            
-            @Override
-            public void run(){
-//                long start=LocalTime.now().toNanoOfDay();
-                Seanses seans = getSeanseFromGUI();
-                if(seans.getSeansesTime().before(Calendar.getInstance())){
-                    JOptionPane.showMessageDialog(null, "Can't do this operation");
-                }else{
-                    try{
-                        hibUtil.addSeanse(seans,updatedDate);
-                        String seansesDate=seans.getSeansesTime().toDateString();
-//                        long end=LocalTime.now().toNanoOfDay();
-                        if(seansesDate.equals(firstTableDay)){
-                               setSeanseFromDatabaseToTable(getStartSeanseDay(), jTableToday);
-                           }else if(seansesDate.equals(nextTableDay)){
-                               setSeanseFromDatabaseToTable(getNextTableDate(), jTableNextDay);
-                           }
-                        JOptionPane.showMessageDialog(null, "Seanse is created");
-//                        System.out.println((end-start)+"run() in thread before dialog");
-                    }catch(HibernateException e){
-                    }
-                }
-//                long end=LocalTime.now().toNanoOfDay();
-//                System.out.println((end-start)+"run() in thread at btnNewPacient(()");
-            }
-       };
-       thread.start();
-      
+//       Thread thread = new Thread("Saving seanses to DB"){
+//            
+//            @Override
+//            public void run(){
+////                long start=LocalTime.now().toNanoOfDay();
+//                Seanses seans = getSeanseFromGUI();
+//                if(seans.getSeansesTime().before(Calendar.getInstance())){
+//                    JOptionPane.showMessageDialog(null, "Can't do this operation");
+//                }else{
+//                    try{
+//                        hibUtil.addSeanse(seans,updatedDate);
+//                        String seansesDate=seans.getSeansesTime().toDateString();
+////                        long end=LocalTime.now().toNanoOfDay();
+//                        if(seansesDate.equals(firstTableDay)){
+//                               setSeanseFromDatabaseToTable(getStartSeanseDay(), jTableToday);
+//                           }else if(seansesDate.equals(nextTableDay)){
+//                               setSeanseFromDatabaseToTable(getNextTableDate(), jTableNextDay);
+//                           }
+//                        JOptionPane.showMessageDialog(null, "Seanse is created");
+////                        System.out.println((end-start)+"run() in thread before dialog");
+//                    }catch(HibernateException e){
+//                    }
+//                }
+////                long end=LocalTime.now().toNanoOfDay();
+////                System.out.println((end-start)+"run() in thread at btnNewPacient(()");
+//            }
+//       };
+//       thread.start();
+//      
     }//GEN-LAST:event_jButNewPacientActionPerformed
 
-    private void RemoveChoosenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveChoosenActionPerformed
-        Runnable runnable;
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                int choosenIndex=0;
-                DefaultTableModel dtm= null;
-                if(jTableToday.getSelectedRow()!=-1){
-                    dtm=(DefaultTableModel)jTableToday.getModel();
-                    choosenIndex=jTableToday.getSelectedRow();
-                }else if(jTableNextDay.getSelectedRow()!=-1){
-                    dtm=(DefaultTableModel)jTableNextDay.getModel();
-                    choosenIndex=jTableNextDay.getSelectedRow();
-                }
-                if(dtm!=null){
+    /**
+     *
+     * @return timestamp to be deleted from data storage
+     */
+    public Timestamp getTimesatampToDelete(){
+        Timestamp stamp=null;
+        int choosenIndex=0;
+        DefaultTableModel dtm= null;
+            if(jTableToday.getSelectedRow()!=-1){
+                dtm=(DefaultTableModel)jTableToday.getModel();
+                choosenIndex=jTableToday.getSelectedRow();
                     
-                    DateTimeFormatter dtDateTime=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                    LocalDate choosenDate= LocalDate.parse((""+dtm.getValueAt(choosenIndex, 0)));
-                    LocalTime choosenTime= LocalTime.parse((""+dtm.getValueAt(choosenIndex, 1)));
-                    
-                    LocalDateTime locDT=LocalDateTime.of(choosenDate, choosenTime);
-                    String dateTime=locDT.format(dtDateTime);
-                    hibUtil.removeByDate(dateTime);
-                    
-                    dtm.setValueAt(null, choosenIndex, 0);
-                    dtm.setValueAt(null, choosenIndex, 2);
-                    dtm.setValueAt(null, choosenIndex, 3);
-                    
-                    JOptionPane.showMessageDialog(null, "Deleted");
-                }
+            }else if(jTableNextDay.getSelectedRow()!=-1){
+                dtm=(DefaultTableModel)jTableNextDay.getModel();
+                choosenIndex=jTableNextDay.getSelectedRow();
             }
-        };
-        new Thread(runnable).start();
-        
-    }//GEN-LAST:event_RemoveChoosenActionPerformed
-
+            if(dtm!=null){
+                
+                stamp=DateTimeAPI.getTimestampOf(dtm.getColumnName(0)
+                               ,""+dtm.getValueAt(choosenIndex, 0));
+                    
+                dtm.setValueAt(null, choosenIndex, 1);
+                dtm.setValueAt(null, choosenIndex, 2);
+                dtm.setValueAt(null, choosenIndex, 3);
+            }
+        return stamp;
+    }
+    
+    public JButton getButtonRemove(){
+        return RemoveChoosen;
+    }
+    
+    public JButton getButtonAddSeanses(){
+        return  jButNewPacient;
+    }
+    
     private void jTableTodayMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableTodayMousePressed
         if(jTableNextDay.getSelectedRows().length>0){
             jTableNextDay.clearSelection();
@@ -518,41 +505,41 @@ public class MainFrame extends JFrame {
     }//GEN-LAST:event_jTableNextDayMousePressed
 
 //    @SuppressWarnings("unchecked")
-    private void setSeanseFromDatabaseToTable(LocalDate date, JTable table){
+    public void setDataToTable(List<Seanses> data){
+               
+        if(!data.isEmpty()){ 
 
-        String day=date.format(DateTimeFormatter.ISO_LOCAL_DATE);
-                
-        List<?> lis;
-        lis = HibernateUtil.getListBy_Date(day);
-            
-        try{
-            if(!lis.isEmpty()){ 
-                DefaultTableModel dtm = (DefaultTableModel)table.getModel();
+            data.forEach((Seanses s) -> {
+                    
+                LocalDate sdate= s.getSeansesTime().toLocalDateTime().toLocalDate();
+                DefaultTableModel dtm =null;
+                    
+                if(sdate.isEqual(DateTimeAPI.DATE_FIRST_TABLE)){
+                    dtm=(DefaultTableModel)jTableToday.getModel();
+                }else if(sdate.isEqual(DateTimeAPI.DATE_SECOND_TABLE)){
+                    dtm=(DefaultTableModel)jTableNextDay.getModel();
+                }
+                    
+                    try{
+                            for(int i = 0;i<dtm.getRowCount();i++){
+                                String tableTime = (String)dtm.getValueAt(i, 0);
 
-                lis.forEach((ob) -> {
-                    Seanses s = (Seanses)ob;
+                                    if(tableTime.equals(s.getTime())){
 
-                    for(int i = 0;i<dtm.getRowCount();i++){
-                        String tableTime = (String)dtm.getValueAt(i, 0);
-//                        LocalTime time = LocalTime.parse(tableTime);
-                        if(tableTime.equals(s.getTime())){
-
-                                dtm.setValueAt(s.getPacientName(), i, 1);
-                                dtm.setValueAt(s.getPacientPhone(), i, 2);
-                                String isFirstTime = (s.getIsFirstTime())?"Вперше":null;
-                                dtm.setValueAt(isFirstTime, i, 3);
+                                    dtm.setValueAt(s.getPacientName(), i, 1);
+                                    dtm.setValueAt(s.getPacientPhone(), i, 2);
+                                    String isFirstTime = (s.getIsFirstTime())?"Вперше":null;
+                                    dtm.setValueAt(isFirstTime, i, 3);
+                                }
                             }
-                    }
+                        
+                        }catch(NullPointerException e){
+                        JOptionPane.showMessageDialog(null, "For two nearest seanses dates no pacients");
+                        }
+                    
                 });
             }
-        }catch(NullPointerException e){
-                    
-        }
-    }
-    
-    private void displayDataToTables(){
-        setSeanseFromDatabaseToTable(getStartSeanseDay(), jTableToday);
-        setSeanseFromDatabaseToTable(getNextTableDate(), jTableNextDay);
+        
     }
     
     private void runningClock() {
@@ -582,65 +569,59 @@ public class MainFrame extends JFrame {
         thr.start();
     }
 
-    
-    
-    private String getFormattedDate(LocalDate date){
-        DateTimeFormatter dtf=DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return date.format(dtf);
-    }
-           
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
+    public static MainFrame startFrame() {
         
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//        
-//        //</editor-fold>
-//
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(() -> {
-//            new MainFrame().setVisible(true);
-//        });
-DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-LocalDateTime date = LocalDateTime.parse("2017-04-08 10:40",formatter);
-Timestamp stamp = Timestamp.valueOf(date);
-                Seanses s= new Seanses(stamp, "Tested time");
-                System.out.println(s.getTime());
-    }
-    
-    public Seanses getSeanseFromGUI() {
-        Seanses seanse=null;
-        try{
-            String pacName=tfPacFamily.getText();
-            if(!pacName.trim().equals("")&&jDateChooser1.getDate()!=null){
-                
-                date= sdfDate.format(jDateChooser1.getDate());
-                updatedDate = date+" "+jComboTime.getSelectedItem();
-                sdfDateTime.parse(updatedDate);
-                
-                apiCalendar cal=(apiCalendar) sdfDateTime.getCalendar();
-                seanse= new Seanses(cal, tfPacFamily.getText());
-                if(!tfPhone.getText().trim().equals(""))
-                seanse.setPacientPhone(tfPhone.getText());
-            }else{
-                JOptionPane.showMessageDialog(null, "Field can't be empty");
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
             }
-        }catch(ParseException e){   
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-
-        return seanse;
         
+        /* Create and display the form */
+        MainFrame frame= new MainFrame();
+        java.awt.EventQueue.invokeLater(() -> {
+            frame.setVisible(true);
+        });
+        
+        return frame;
+    }
+    
+    public Seanses getSeanseFromGUI() throws NullPointerException, Exception {
+        Seanses seanse=null;
+        String pacName=tfPacFamily.getText();
+        Date date = jDateChooser1.getDate();
+        
+        if(!pacName.trim().equals("")&& date!=null){
+            
+            Timestamp stamp = DateTimeAPI.getTimestampOf(jDateChooser1.getDate(),
+                                            jComboTime.getSelectedItem()+"");
+            
+            if((stamp.toLocalDateTime()).isAfter(LocalDateTime.now())){
+                
+                seanse = new Seanses(stamp, tfPacFamily.getText());
+                
+                    try{
+                        int number= Integer.valueOf(tfPhone.getText());
+                        seanse.setPacientPhone(number+"");
+                    }catch(NumberFormatException e){
+                        JOptionPane.showMessageDialog(null, "Wrong phone number."
+                                + "Must be only numbers!");
+                    }
+                
+            }else{
+             JOptionPane.showMessageDialog(null, "Can't save seanse for days before today!");
+             throw new Exception("Date for save before today");
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "Field can't be empty");   
+            throw new NullPointerException("Seanse is null");            
+        }
+        return seanse;
     }
     
     
