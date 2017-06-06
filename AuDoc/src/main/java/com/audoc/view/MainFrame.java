@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.JButton;
@@ -669,6 +670,4 @@ public class MainFrame extends JFrame {
     // End of variables declaration//GEN-END:variables
 
     
-
-  
 }

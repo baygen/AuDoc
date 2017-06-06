@@ -25,8 +25,11 @@ public class MainController implements ActionListener{
     }
     
     public static  void main(String[] args){
+        Functions func = new Functions();
         MainFrame frame = MainFrame.startFrame();
-        MainController controller  = new MainController(new Functions(), frame);
+        frame.setDataToTable(Functions.allData);
+        
+        MainController controller  = new MainController(func, frame);
     }
 
     @Override
@@ -39,8 +42,8 @@ public class MainController implements ActionListener{
     }
 
     private void removeSeanse() {
+        manage.removeSeanse(mainFrame.getTimesatampToDelete());
         
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void addSeanse() {
